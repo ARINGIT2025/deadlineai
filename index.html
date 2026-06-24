@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeadlineAI — Intelligent Productivity Command Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-mark">⚡</div>
+        <div>
+            <span class="logo-name">DeadlineAI</span>
+            <span class="logo-tag">Powered by Gemini</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <span class="nav-section-label">Main</span>
+        <a class="menu-item active" onclick="showPage('dashboard')">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a class="menu-item" onclick="showPage('chat')">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+            <span class="menu-badge">GEMINI</span>
+        </a>
+
+        <span class="nav-section-label" style="margin-top:12px;">Workspace</span>
+        <a class="menu-item" onclick="showPage('tasks')">
+            <i class="fas fa-list-check"></i>
+            <span>Task Manager</span>
+        </a>
+        <a class="menu-item" onclick="showPage('goals')">
+            <i class="fas fa-crosshairs"></i>
+            <span>Goals & Milestones</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <div class="user-avatar">P</div>
+        <div>
+            <span class="user-name">Productivity Pro</span>
+            <span class="user-status">● Active Session</span>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main-area">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div>
+            <div class="page-heading" id="pageHeading">Command Center</div>
+            <div class="page-sub" id="pageSub">Real-time productivity intelligence</div>
+        </div>
+        <div class="topbar-right">
+            <div class="clock" id="clock">--:-- --</div>
+            <button class="btn-primary" onclick="openAddTask()">
+                <i class="fas fa-plus"></i> New Task
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE: DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+
+        <div class="stats-row">
+            <div class="stat-card s-red">
+                <div class="stat-icon-box"><i class="fas fa-fire" style="color:#EF5350;"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-urgent">0</div>
+                    <div class="stat-label">Critical Tasks</div>
+                </div>
+                <span class="stat-corner-badge">Due Today</span>
+            </div>
+            <div class="stat-card s-orange">
+                <div class="stat-icon-box"><i class="fas fa-clock" style="color:#FFA726;"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-pending">0</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <span class="stat-corner-badge">Active</span>
+            </div>
+            <div class="stat-card s-green">
+                <div class="stat-icon-box"><i class="fas fa-circle-check" style="color:#66BB6A;"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-done">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <span class="stat-corner-badge">This Week</span>
+            </div>
+            <div class="stat-card s-gold">
+                <div class="stat-icon-box"><i class="fas fa-star" style="color:#C9A84C;"></i></div>
+                <div>
+                    <div class="stat-value" id="stat-score">0%</div>
+                    <div class="stat-label">Efficiency Score</div>
+                </div>
+                <span class="stat-corner-badge">Overall</span>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <div class="card">
+                <div class="card-head">
+                    <span class="card-title">Task Distribution</span>
+                    <span class="live-badge"><span class="live-dot"></span> Live</span>
+                </div>
+                <canvas id="myChart" height="200"></canvas>
+            </div>
+
+            <div class="card card-gold-border">
+                <div class="card-head">
+                    <span class="card-title" style="color:var(--gold-light);">
+                        <i class="fas fa-brain" style="margin-right:8px;"></i>AI Intelligence Feed
+                    </span>
+                    <button class="icon-btn" onclick="loadInsights()">
+                        <i class="fas fa-rotate-right"></i>
+                    </button>
+                </div>
+                <div id="insights-box">
+                    <div class="loading-state">
+                        <i class="fas fa-circle-notch fa-spin" style="color:var(--gold);font-size:1.4rem;"></i>
+                        <span>Gemini AI is analyzing your workspace...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <span class="card-title">
+                    <i class="fas fa-triangle-exclamation" style="color:#EF5350;margin-right:8px;"></i>
+                    Requires Immediate Attention
+                </span>
+                <button class="see-all-btn" onclick="showPage('tasks')">
+                    View All <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div id="urgent-list">
+                <div class="empty-state">
+                    <i class="fas fa-circle-check empty-icon"></i>
+                    <p class="empty-text">No critical tasks. You are on track.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PAGE: AI CHAT -->
+    <div class="page" id="page-chat">
+        <div class="chat-layout">
+
+            <div class="shortcuts-panel">
+                <span class="shortcuts-label">Quick Actions</span>
+                <div class="shortcut-item" onclick="fillChat('Add a task: ')">
+                    <i class="fas fa-plus"></i><span>Add Task</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('Prioritize all my pending tasks and explain why')">
+                    <i class="fas fa-arrow-up-wide-short"></i><span>Prioritize All</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('Create a detailed plan for my day today')">
+                    <i class="fas fa-calendar-day"></i><span>Plan My Day</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('What should I focus on right now and why?')">
+                    <i class="fas fa-crosshairs"></i><span>Focus Mode</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('Break down my goal: ')">
+                    <i class="fas fa-diagram-project"></i><span>Break Down Goal</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('Which of my tasks are overdue? Help me reschedule them')">
+                    <i class="fas fa-rotate"></i><span>Reschedule Overdue</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('Give me advanced productivity techniques for my situation')">
+                    <i class="fas fa-lightbulb"></i><span>Productivity Tips</span>
+                </div>
+                <div class="shortcut-item" onclick="fillChat('Analyze my productivity patterns and give insights')">
+                    <i class="fas fa-chart-bar"></i><span>Analyze Patterns</span>
+                </div>
+            </div>
+
+            <div class="chat-window">
+                <div class="chat-topbar">
+                    <span class="ai-online-dot"></span>
+                    <span class="chat-ai-name">DeadlineAI</span>
+                    <span class="model-tag">Gemini 1.5 Flash</span>
+                    <button class="clear-chat-btn" onclick="clearChat()">
+                        <i class="fas fa-trash-can"></i> Clear
+                    </button>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="msg ai-msg">
+                        <div class="msg-av ai-av">⚡</div>
+                        <div class="msg-body">
+                            <div class="msg-sender-name">DeadlineAI — Gemini Powered</div>
+                            <div class="msg-bubble welcome-msg">
+                                <strong style="color:var(--gold-light);">Welcome to your AI Productivity Command Center.</strong><br><br>
+                                I am powered by <strong>Google Gemini</strong> and operate as your autonomous productivity agent. I can:<br><br>
+                                <span style="color:var(--gold);">◆</span> Intelligently add and manage tasks via natural language<br>
+                                <span style="color:var(--gold);">◆</span> Autonomously prioritize by deadline, urgency, and impact<br>
+                                <span style="color:var(--gold);">◆</span> Generate optimized daily schedules<br>
+                                <span style="color:var(--gold);">◆</span> Decompose complex goals into executable steps<br>
+                                <span style="color:var(--gold);">◆</span> Identify and resolve scheduling conflicts proactively<br><br>
+                                <em style="color:var(--gray-3);">How can I help you perform at your best today?</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="input-box">
+                        <button class="voice-btn" id="voiceBtn" onclick="startVoice()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <textarea
+                            id="userInput"
+                            class="chat-textarea"
+                            rows="1"
+                            placeholder="Message DeadlineAI... e.g. 'Add task: Review quarterly report by Friday 3PM, high priority'"
+                        ></textarea>
+                        <button class="send-btn" onclick="sendChat()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div id="voice-status" class="voice-status-text"></div>
+                    <div class="chips-row">
+                        <span class="chip" onclick="fillChat('What are my most critical tasks right now?')">Critical Tasks</span>
+                        <span class="chip" onclick="fillChat('Plan my day efficiently')">Plan Today</span>
+                        <span class="chip" onclick="fillChat('I feel overwhelmed, help me prioritize')">Overwhelmed?</span>
+                        <span class="chip" onclick="fillChat('What did I complete recently?')">My Progress</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PAGE: TASKS -->
+    <div class="page" id="page-tasks">
+        <div class="tasks-toolbar">
+            <input type="text" id="searchBox" class="search-field" placeholder="Search tasks..." oninput="filterTasks()">
+            <select id="filterPri" class="filter-select" onchange="filterTasks()">
+                <option value="all">All Priorities</option>
+                <option value="urgent">Critical</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <select id="filterStat" class="filter-select" onchange="filterTasks()">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+            </select>
+            <button class="btn-dark" onclick="aiPrioritize()">
+                <i class="fas fa-brain"></i> AI Prioritize
+            </button>
+            <button class="btn-primary" onclick="openAddTask()">
+                <i class="fas fa-plus"></i> New Task
+            </button>
+        </div>
+        <div class="tasks-grid" id="tasksGrid"></div>
+    </div>
+
+    <!-- PAGE: GOALS -->
+    <div class="page" id="page-goals">
+        <div class="goals-page-header">
+            <h2 class="goals-page-title">Goals & Milestones</h2>
+            <button class="btn-primary" onclick="openAddGoal()">
+                <i class="fas fa-plus"></i> New Goal
+            </button>
+        </div>
+        <div class="goals-grid" id="goalsGrid"></div>
+    </div>
+
+</div>
+
+<!-- POPUP: ADD TASK -->
+<div class="popup-overlay" id="taskPopup">
+    <div class="popup">
+        <div class="popup-head">
+            <div class="popup-title">
+                <div class="popup-title-icon"><i class="fas fa-plus" style="color:var(--gold);"></i></div>
+                New Task
+            </div>
+            <button class="popup-close-btn" onclick="closeAddTask()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="popup-body">
+            <div class="form-field">
+                <label class="form-label">Task Title *</label>
+                <input type="text" id="inp-title" class="form-input" placeholder="What needs to be accomplished?">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Description</label>
+                <textarea id="inp-desc" class="form-textarea" placeholder="Additional context or details..."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label class="form-label">Deadline</label>
+                    <input type="datetime-local" id="inp-deadline" class="form-input">
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Priority Level</label>
+                    <select id="inp-priority" class="form-select">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Critical</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label class="form-label">Category</label>
+                    <select id="inp-category" class="form-select">
+                        <option value="work">Work</option>
+                        <option value="study">Study</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Duration (minutes)</label>
+                    <input type="number" id="inp-time" class="form-input" placeholder="e.g. 45">
+                </div>
+            </div>
+            <label class="form-check-row">
+                <input type="checkbox" id="inp-aibreak">
+                <span><i class="fas fa-brain" style="color:var(--gold);margin-right:6px;"></i>Let AI decompose into subtasks</span>
+            </label>
+        </div>
+        <div class="popup-foot">
+            <button class="btn-ghost" onclick="closeAddTask()">Cancel</button>
+            <button class="btn-primary" onclick="saveTask()"><i class="fas fa-save"></i> Save Task</button>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP: ADD GOAL -->
+<div class="popup-overlay" id="goalPopup">
+    <div class="popup">
+        <div class="popup-head">
+            <div class="popup-title">
+                <div class="popup-title-icon"><i class="fas fa-crosshairs" style="color:var(--gold);"></i></div>
+                New Goal
+            </div>
+            <button class="popup-close-btn" onclick="closeAddGoal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="popup-body">
+            <div class="form-field">
+                <label class="form-label">Goal Title *</label>
+                <input type="text" id="goal-title" class="form-input" placeholder="What do you want to achieve?">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Description</label>
+                <textarea id="goal-desc" class="form-textarea" placeholder="Why is this goal important?"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label class="form-label">Target Date</label>
+                    <input type="date" id="goal-date" class="form-input">
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Category</label>
+                    <select id="goal-cat" class="form-select">
+                        <option value="career">Career</option>
+                        <option value="health">Health</option>
+                        <option value="learning">Learning</option>
+                        <option value="financial">Financial</option>
+                        <option value="personal">Personal</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="popup-foot">
+            <button class="btn-ghost" onclick="closeAddGoal()">Cancel</button>
+            <button class="btn-primary" onclick="saveGoal()"><i class="fas fa-save"></i> Save Goal</button>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP: AI RESPONSE -->
+<div class="popup-overlay" id="aiPopup">
+    <div class="popup popup-wide">
+        <div class="popup-head">
+            <div class="popup-title">
+                <div class="popup-title-icon"><i class="fas fa-brain" style="color:var(--gold);"></i></div>
+                AI Analysis
+            </div>
+            <button class="popup-close-btn" onclick="closeAiPopup()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="popup-body">
+            <div id="aiResult" class="ai-result-box">Processing...</div>
+        </div>
+        <div class="popup-foot">
+            <button class="btn-primary" onclick="closeAiPopup()"><i class="fas fa-check"></i> Acknowledged</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastBox"></div>
+
+<script src="gemini.js"></script>
+<script src="tasks.js"></script>
+<script src="dashboard.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
